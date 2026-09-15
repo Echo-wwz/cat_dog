@@ -1,0 +1,131 @@
+{
+  "rows": [
+    {
+      "config": "1_scratch_alexnet",
+      "epochs": 30,
+      "lr": 0.0001,
+      "aug": "none",
+      "folds": 5,
+      "pooled_mean": 0.6533333333333333,
+      "pooled_std": 0.04725815626252608,
+      "pooled_min": 0.6,
+      "pooled_max": 0.69,
+      "fold_mean": 0.6533333333333334,
+      "fold_std": 0.07668736780560655,
+      "sec_mean": 54.48607317606608,
+      "pooled_per_seed": "0.6900;0.6700;0.6000"
+    },
+    {
+      "config": "2_alexnet_frozen",
+      "epochs": 5,
+      "lr": 0.0001,
+      "aug": "none",
+      "folds": 5,
+      "pooled_mean": 0.9233333333333333,
+      "pooled_std": 0.025166114784235794,
+      "pooled_min": 0.9,
+      "pooled_max": 0.95,
+      "fold_mean": 0.9233333333333333,
+      "fold_std": 0.06229729031789728,
+      "sec_mean": 10.897999207178751,
+      "pooled_per_seed": "0.9200;0.9500;0.9000"
+    },
+    {
+      "config": "3_resnet18_noaug",
+      "epochs": 5,
+      "lr": 0.001,
+      "aug": "none",
+      "folds": 5,
+      "pooled_mean": 0.9133333333333334,
+      "pooled_std": 0.011547005383792525,
+      "pooled_min": 0.9,
+      "pooled_max": 0.92,
+      "fold_mean": 0.9133333333333333,
+      "fold_std": 0.06399404734221843,
+      "sec_mean": 9.966039021809896,
+      "pooled_per_seed": "0.9200;0.9000;0.9200"
+    },
+    {
+      "config": "4_resnet18_aug",
+      "epochs": 5,
+      "lr": 0.001,
+      "aug": "basic",
+      "folds": 5,
+      "pooled_mean": 0.91,
+      "pooled_std": 0.010000000000000009,
+      "pooled_min": 0.9,
+      "pooled_max": 0.92,
+      "fold_mean": 0.91,
+      "fold_std": 0.07121396331779722,
+      "sec_mean": 14.297463575998941,
+      "pooled_per_seed": "0.9200;0.9100;0.9000"
+    },
+    {
+      "config": "6_mobilenet_aug",
+      "epochs": 5,
+      "lr": 0.001,
+      "aug": "basic",
+      "folds": 5,
+      "pooled_mean": 0.91,
+      "pooled_std": 0.010000000000000009,
+      "pooled_min": 0.9,
+      "pooled_max": 0.92,
+      "fold_mean": 0.91,
+      "fold_std": 0.047056197405716,
+      "sec_mean": 13.911689360936483,
+      "pooled_per_seed": "0.9200;0.9000;0.9100"
+    },
+    {
+      "config": "7_shufflenet_aug",
+      "epochs": 5,
+      "lr": 0.001,
+      "aug": "basic",
+      "folds": 5,
+      "pooled_mean": 0.9033333333333333,
+      "pooled_std": 0.005773502691896262,
+      "pooled_min": 0.9,
+      "pooled_max": 0.91,
+      "fold_mean": 0.9033333333333334,
+      "fold_std": 0.06672616392676077,
+      "sec_mean": 14.221682866414389,
+      "pooled_per_seed": "0.9000;0.9100;0.9000"
+    }
+  ],
+  "pairs": [
+    {
+      "compare": "数据增强 (aug - noaug)",
+      "delta_mean": -0.003333333333333336,
+      "delta_std": 0.015275252316519479,
+      "wins": 1,
+      "n": 3
+    },
+    {
+      "compare": "迁移学习 (预训练 - 从零)",
+      "delta_mean": 0.27,
+      "delta_std": 0.03605551275463985,
+      "wins": 3,
+      "n": 3
+    },
+    {
+      "compare": "MobileNet vs ResNet18",
+      "delta_mean": 0.0,
+      "delta_std": 0.010000000000000009,
+      "wins": 1,
+      "n": 3
+    },
+    {
+      "compare": "ShuffleNet vs ResNet18",
+      "delta_mean": -0.006666666666666672,
+      "delta_std": 0.011547005383792526,
+      "wins": 0,
+      "n": 3
+    }
+  ],
+  "seeds": [
+    42,
+    1,
+    2
+  ],
+  "folds": 5,
+  "n": 100
+}

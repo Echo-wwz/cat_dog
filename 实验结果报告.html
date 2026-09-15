@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>猫狗图像分类实验 · 结果报告（多随机种子版）</title>
+<style>
+  :root{
+    --bg:#0D1117; --panel:#161B22; --panel2:#1C2230; --line:#2A3240;
+    --fg:#E6EDF3; --fg2:#9DA7B3; --accent:#0A84FF; --ok:#3FB950;
+    --warn:#D29922; --bad:#F85149; --purple:#A371F7;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; padding:48px 28px 80px;
+    background:var(--bg); color:var(--fg);
+    font-family:"Segoe UI","Microsoft YaHei","PingFang SC",system-ui,sans-serif;
+    line-height:1.75; font-size:15px;
+  }
+  .wrap{max-width:1100px;margin:0 auto}
+  header{border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:32px}
+  h1{margin:0 0 10px;font-size:29px;letter-spacing:.5px}
+  h1 span{color:var(--accent)}
+  .sub{color:var(--fg2);font-size:14px}
+  .sub code{background:var(--panel2);padding:2px 7px;border-radius:5px;color:#7EE787}
+  h2{
+    font-size:20px;margin:46px 0 16px;padding-left:13px;
+    border-left:3px solid var(--accent);letter-spacing:.4px;
+  }
+  h3{font-size:16px;margin:28px 0 10px;color:var(--fg)}
+  table{width:100%;border-collapse:collapse;margin:14px 0 8px;font-size:13.5px}
+  th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line)}
+  th{background:var(--panel2);color:var(--fg2);font-weight:600;font-size:12.5px;
+     letter-spacing:.4px;white-space:nowrap}
+  tbody tr:hover{background:var(--panel)}
+  td.num{font-variant-numeric:tabular-nums;font-family:"Cascadia Mono",Consolas,monospace}
+  td.ctr{text-align:center}
+  .hi{color:var(--ok);font-weight:600}
+  .lo{color:var(--bad);font-weight:600}
+  .mid{color:var(--warn);font-weight:600}
+  .acc{color:var(--accent);font-weight:600}
+  .dim{color:var(--fg2)}
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:18px 22px;margin:16px 0;
+  }
+  .card.warn{border-left:3px solid var(--warn)}
+  .card.ok{border-left:3px solid var(--ok)}
+  .card.info{border-left:3px solid var(--accent)}
+  .card.bad{border-left:3px solid var(--bad)}
+  .card h3{margin-top:0}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:18px 0}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:15px 17px}
+  .kpi .v{font-size:24px;font-weight:700;color:var(--accent);
+          font-variant-numeric:tabular-nums;line-height:1.3}
+  .kpi .k{font-size:12.5px;color:var(--fg2);margin-top:4px}
+  code{background:var(--panel2);padding:2px 6px;border-radius:5px;
+       font-family:"Cascadia Mono",Consolas,monospace;font-size:13px;color:#7EE787}
+  pre{background:var(--panel);border:1px solid var(--line);border-radius:9px;
+      padding:14px 17px;overflow-x:auto;font-size:12.5px;line-height:1.6}
+  pre code{background:none;padding:0;color:var(--fg)}
+  .tag{display:inline-block;font-size:11.5px;padding:2px 9px;border-radius:20px;
+       border:1px solid var(--line);color:var(--fg2);margin-right:5px;white-space:nowrap}
+  .tag.ok{border-color:#3FB95066;color:#7EE787}
+  .tag.no{border-color:#F8514966;color:#FF9B95}
+  .tag.neu{border-color:#D2992266;color:#E3B341}
+  .bar{display:inline-block;height:9px;border-radius:5px;background:var(--accent);
+       vertical-align:middle;margin-right:7px}
+  .bar.g{background:var(--ok)} .bar.r{background:var(--bad)} .bar.y{background:var(--warn)}
+  ul{padding-left:22px} li{margin:7px 0}
+  .foot{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);
+        color:var(--fg2);font-size:13px}
+  @media print{
+    :root{--bg:#fff;--panel:#fff;--panel2:#F3F5F8;--line:#D8DEE6;
+          --fg:#111;--fg2:#555;--accent:#0A5FCC}
+    body{padding:0;font-size:11.5px}
+    h2{page-break-after:avoid} table{page-break-inside:avoid}
+    .card{page-break-inside:avoid}
+    code,pre{background:#F3F5F8;color:#111}
+    .hi{color:#0A7A2F}.lo{color:#B3261E}.mid{color:#8A5A00}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>猫狗图像分类实验 · <span>结果报告</span>（多随机种子版）</h1>
+  <div class="sub">
+    数据集 <code>D:\CV\cat_dog\data</code>（100 张，猫 50 / 狗 50）&nbsp;·&nbsp;
+    划分 80 / 20，<strong>5 个随机种子</strong>（42, 1, 2, 3, 4）&nbsp;·&nbsp;
+    RTX 5070 Laptop 12GB&nbsp;·&nbsp; torch 2.13.0+cu130 / Python 3.12.14<br>
+    代码 <code>D:\CV\cat_dog</code> &nbsp;·&nbsp;
+    消融脚本 <code>step7_ablation.py</code> &nbsp;·&nbsp; 原始日志 <code>outputs/logs/</code><br>
+    <span style="color:#3FB950">状态：<strong>全部跑完</strong> —— 50 次消融 + 10 次单跑 + 90 次交叉验证（6 配置 × 3 种子 × 5 折）。<br>
+    单次划分分辨率 5%（20 张验证集），5 折池化分辨率 <strong>1%（100 张）</strong>，结论以池化列为准（见第六节）。</span>
+  </div>
+</header>
+
+<div class="grid">
+  <div class="kpi"><div class="v">+0.23</div><div class="k">迁移学习增益（5/5 种子一致）</div></div>
+  <div class="kpi"><div class="v">1 / 5</div><div class="k">五组对照里唯一显著的变量</div></div>
+  <div class="kpi"><div class="v">0.05 ~ 0.10</div><div class="k">各配置准确率标准差</div></div>
+  <div class="kpi"><div class="v">50 次</div><div class="k">消融总运行次数</div></div>
+</div>
+
+<div class="card info">
+  <h3>结论速览（先看这四条）</h3>
+  <ol style="margin:6px 0 0">
+    <li><strong>只有"迁移学习"这一个变量是真的。</strong>
+        单次划分 预训练 − 从零 = <span class="hi">+0.2300 ± 0.1151</span>（5/5 种子）；
+        5 折池化 <span class="hi">+0.2700 ± 0.0361</span>（3/3 种子）。
+        两种分辨率、两套方法都指向同一结论，且训练时间只要 1/5。</li>
+    <li><strong>数据增强在这份数据上没有任何收益。</strong>
+        5 轮 <span class="lo">−0.0200</span>、15 轮 <span class="lo">−0.0100</span>、
+        池化 <span class="lo">−0.0033</span>——<strong>三次方向一致都是负的</strong>。
+        这与指导书"增强提升泛化"的预期相反：80 张训练样本太少，
+        增强换来的方差收益抵不过信息稀释。</li>
+    <li><strong>模型选型无意义。</strong>
+        四个预训练模型（AlexNet 冻结 / ResNet18 / MobileNetV3-S / ShuffleNetV2）
+        池化后全部落在 <span class="num">0.9033–0.9233</span>，最大差距 2 张图。</li>
+    <li><strong>指导书"六步对比表"里的多数差异其实是噪声。</strong>
+        验证集只有 20 张（1 个样本 = 5%），而各配置的标准差就有 0.05~0.10。
+        单次运行得出的"0.85 vs 0.90 vs 0.95"<strong>不具备统计意义</strong>——
+        本报告第三节的「ShuffleNet 明显更差」就是被这一点骗到的，第六节已修正。</li>
+  </ol>
+</div>
+
+<h2>一、多随机种子消融主表</h2>
+<p class="dim" style="font-size:14px">
+  每个配置在 5 个随机种子（42, 1, 2, 3, 4）上各跑一次，<strong>同种子共用同一份数据划分</strong>，
+  因此可以逐种子配对比较。所有配置的 <code>epochs / lr</code> 均与对应脚本的默认值严格一致。
+</p>
+
+<table>
+  <thead><tr>
+    <th>配置</th><th class="ctr">轮数</th><th class="ctr">lr</th><th class="ctr">增强</th>
+    <th class="ctr">准确率 均值</th><th class="ctr">标准差</th><th class="ctr">最小</th>
+    <th class="ctr">最大</th><th class="ctr">训练 loss</th><th>5 个种子的逐次结果</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td>1 · 从零训练 AlexNet</td><td class="ctr num">30</td><td class="ctr num">1e-4</td>
+      <td class="ctr">—</td>
+      <td class="ctr num lo">0.6800</td><td class="ctr num">0.1037</td>
+      <td class="ctr num">0.55</td><td class="ctr num">0.80</td>
+      <td class="ctr num">0.0070</td>
+      <td class="num dim">.80 / .70 / .75 / .55 / .60</td>
+    </tr>
+    <tr>
+      <td>2 · 预训练 AlexNet 冻结</td><td class="ctr num">5</td><td class="ctr num">1e-4</td>
+      <td class="ctr">—</td>
+      <td class="ctr num hi">0.9100</td><td class="ctr num">0.0548</td>
+      <td class="ctr num">0.85</td><td class="ctr num">0.95</td>
+      <td class="ctr num">0.0015</td>
+      <td class="num dim">.95 / .95 / .85 / .95 / .85</td>
+    </tr>
+    <tr>
+      <td>3 · ResNet18 预训练，无增强</td><td class="ctr num">5</td><td class="ctr num">1e-3</td>
+      <td class="ctr">—</td>
+      <td class="ctr num">0.9000</td><td class="ctr num">0.0791</td>
+      <td class="ctr num">0.80</td><td class="ctr num">1.00</td>
+      <td class="ctr num">0.2668</td>
+      <td class="num dim">.90 / 1.0 / .95 / .80 / .85</td>
+    </tr>
+    <tr>
+      <td>4 · ResNet18 + 数据增强</td><td class="ctr num">5</td><td class="ctr num">1e-3</td>
+      <td class="ctr">基础</td>
+      <td class="ctr num">0.8800</td><td class="ctr num">0.0758</td>
+      <td class="ctr num">0.80</td><td class="ctr num">1.00</td>
+      <td class="ctr num">0.3166</td>
+      <td class="num dim">.90 / 1.0 / .85 / .80 / .85</td>
+    </tr>
+    <tr>
+      <td>5 · ResNet18 + 增强 + RandomErasing</td><td class="ctr num">5</td><td class="ctr num">1e-3</td>
+      <td class="ctr">增强+遮挡</td>
+      <td class="ctr num">0.8900</td><td class="ctr num">0.0822</td>
+      <td class="ctr num">0.80</td><td class="ctr num">1.00</td>
+      <td class="ctr num">0.3781</td>
+      <td class="num dim">.95 / 1.0 / .85 / .80 / .85</td>
+    </tr>
+    <tr>
+      <td>6 · MobileNetV3-Small + 增强</td><td class="ctr num">5</td><td class="ctr num">1e-3</td>
+      <td class="ctr">基础</td>
+      <td class="ctr num">0.8900</td><td class="ctr num">0.0548</td>
+      <td class="ctr num">0.80</td><td class="ctr num">0.95</td>
+      <td class="ctr num">0.2868</td>
+      <td class="num dim">.90 / .95 / .90 / .90 / .80</td>
+    </tr>
+    <tr>
+      <td>7 · ShuffleNetV2-x1.0 + 增强</td><td class="ctr num">5</td><td class="ctr num">1e-3</td>
+      <td class="ctr">基础</td>
+      <td class="ctr num lo">0.7400</td><td class="ctr num">0.0822</td>
+      <td class="ctr num">0.60</td><td class="ctr num">0.80</td>
+      <td class="ctr num">0.6591</td>
+      <td class="num dim">.75 / .60 / .80 / .75 / .80</td>
+    </tr>
+    <tr>
+      <td>8 · 预训练 AlexNet 全解冻微调</td><td class="ctr num">5</td><td class="ctr num">1e-5</td>
+      <td class="ctr">—</td>
+      <td class="ctr num">0.8600</td><td class="ctr num">0.0652</td>
+      <td class="ctr num">0.80</td><td class="ctr num">0.95</td>
+      <td class="ctr num">0.2639</td>
+      <td class="num dim">.95 / .80 / .80 / .90 / .85</td>
+    </tr>
+    <tr>
+      <td>9 · ResNet18 无增强（15 轮）</td><td class="ctr num">15</td><td class="ctr num">1e-3</td>
+      <td class="ctr">—</td>
+      <td class="ctr num hi">0.9100</td><td class="ctr num">0.0652</td>
+      <td class="ctr num">0.85</td><td class="ctr num">1.00</td>
+      <td class="ctr num">0.1410</td>
+      <td class="num dim">.90 / 1.0 / .95 / .85 / .85</td>
+    </tr>
+    <tr>
+      <td>10 · ResNet18 增强（15 轮）</td><td class="ctr num">15</td><td class="ctr num">1e-3</td>
+      <td class="ctr">基础</td>
+      <td class="ctr num">0.9000</td><td class="ctr num">0.0707</td>
+      <td class="ctr num">0.85</td><td class="ctr num">1.00</td>
+      <td class="ctr num">0.1429</td>
+      <td class="num dim">.95 / 1.0 / .85 / .85 / .85</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="card warn">
+  <h3>看标准差那一列</h3>
+  <p style="margin:0">
+    同一个配置、同一份数据，<strong>只换随机种子</strong>，准确率就在
+    0.55~0.80（从零训练）或 0.80~1.00（ResNet18）之间跳。
+    标准差 0.055~0.104，换算成验证样本就是 <strong>1~2 个样本的抖动</strong>。
+    所以任何小于 0.10 的差距，都不该被当作结论。
+  </p>
+</div>
+
+<h2>二、配对比较（同一划分下逐种子对比）</h2>
+<p class="dim" style="font-size:14px">
+  "前者更好的种子数"是最有说服力的一列：如果两个配置真的等价，
+  这个数字应该在 2~3 附近随机摆动；如果是 5/5 或 0/5，说明差异是系统性的。
+</p>
+<table>
+  <thead><tr>
+    <th>对比</th><th class="ctr">差值 均值 ± 标准差</th>
+    <th class="ctr">前者更好的种子</th><th class="ctr">判定</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>迁移学习</strong>（预训练 − 从零）</td>
+      <td class="ctr num hi">+0.2300 ± 0.1151</td>
+      <td class="ctr num hi">5 / 5</td>
+      <td class="ctr"><span class="tag ok">显著有效</span></td>
+    </tr>
+    <tr>
+      <td>数据增强（aug − noaug，5 轮）</td>
+      <td class="ctr num">−0.0200 ± 0.0447</td>
+      <td class="ctr num lo">0 / 5</td>
+      <td class="ctr"><span class="tag neu">无显著差异</span></td>
+    </tr>
+    <tr>
+      <td>数据增强（aug − noaug，15 轮）</td>
+      <td class="ctr num">−0.0100 ± 0.0548</td>
+      <td class="ctr num">1 / 5</td>
+      <td class="ctr"><span class="tag neu">无显著差异</span></td>
+    </tr>
+    <tr>
+      <td>RandomErasing（erase − aug）</td>
+      <td class="ctr num">+0.0100 ± 0.0224</td>
+      <td class="ctr num">1 / 5</td>
+      <td class="ctr"><span class="tag neu">无显著差异</span></td>
+    </tr>
+    <tr>
+      <td>冻结 vs 微调（同为 5 轮）</td>
+      <td class="ctr num">+0.0500 ± 0.0612</td>
+      <td class="ctr num">3 / 5</td>
+      <td class="ctr"><span class="tag neu">无显著差异</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>三、逐条解读</h2>
+
+<h3>1 · 迁移学习：唯一站得住的结论</h3>
+<p>
+  从零训练 <span class="lo">0.68 ± 0.10</span> → 预训练冻结
+  <span class="hi">0.91 ± 0.05</span>，差值 <strong>+0.23</strong>，
+  且 <strong>5 个种子全部更好</strong>（连最差的一次预训练 0.85，也高于从零训练最好的一次 0.80）。
+  更有说服力的是训练 loss：从零训练降到 0.007（几乎背下 80 张图），
+  预训练组是 0.0015 —— 两条曲线都在过拟合，但预训练组<strong>起点就高</strong>。
+</p>
+<div class="card ok">
+  <p style="margin:0">
+    <strong>结论：指导书"小数据集从零训练学不出通用视觉特征"是本次实验中唯一被严格证实的论断。</strong>
+    而且实际水平比指导书预估的 0.65~0.80 更低——5 个种子里只有 1 次摸到 0.80。
+  </p>
+</div>
+
+<h3>2 · 数据增强：指导书预期落空</h3>
+<p>
+  指导书说"增强提升泛化，数据越多越明显"。实测：
+  5 轮 <span class="lo">−0.02</span>（0/5 种子为正），
+  15 轮 <span class="lo">−0.01</span>（1/5 种子为正）——
+  <strong>加长轮数也没能翻盘</strong>。
+</p>
+<p>
+  但增强并非"没用"，它改变的是别的东西：训练 loss 从
+  <span class="num">0.267</span> 升到 <span class="num">0.317</span>（5 轮）——
+  训练集变难了，模型确实没能像原来那样背下来。问题在于
+  <strong>80 张训练样本的信息量本来就不足</strong>，
+  再人为制造形变样本只会稀释有限的信息，而不是补充新的信息。
+</p>
+<div class="card warn">
+  <p style="margin:0">
+    <strong>正确的表述是</strong>："在这份 100 张的数据上，未观察到数据增强带来准确率提升。"
+    而不是"增强没用"——增强的价值通常要在数据量足够时才显现，
+    本实验的规模恰好落在它失效的区间里。
+  </p>
+</div>
+
+<h3>3 · RandomErasing：我上一版的结论是错的</h3>
+<p>
+  上一版报告基于单次运行写道"RandomErasing 有效（+0.06，4/5 种子）"。
+  补齐 5 个种子后，真实值是 <span class="num">+0.0100 ± 0.0224</span>，
+  只有 1/5 个种子为正 —— <strong>完全在噪声内，谈不上有效</strong>。
+</p>
+<p class="dim" style="font-size:14px">
+  这个反例本身就是本报告最好的教材：单次运行 + 20 张验证集，
+  足以把纯噪声放大成一个看起来很有道理的故事。
+</p>
+
+<h3>4 · 冻结 vs 微调：上一版被"轮数不对等"骗了</h3>
+<p>
+  上一版报告对比的是"冻结 30 轮 = 0.95"vs"微调 5 轮 = 0.90"，据此得出"冻结更好"。
+  这次把轮数拉平（都是 5 轮）后：<span class="num">0.91</span> vs
+  <span class="num">0.86</span>，差值 <span class="num">+0.05 ± 0.06</span>，3/5 ——
+  <strong>打平</strong>。
+</p>
+<p>
+  不过微调的训练 loss 是 <span class="num">0.264</span>，而冻结只有
+  <span class="num">0.0015</span>：冻结组几乎瞬间就把分类头训完了（第 1 轮就是 0.95），
+  微调组则还在缓慢下降。所以两者的差别不在"能不能学会"，而在
+  <strong>收敛速度和计算成本</strong>——冻结只反传最后一层，微调要反传全部 5701 万参数。
+</p>
+
+<h3>5 · 模型选型：只有 ShuffleNet 是真的差 <span style="color:#F85149;font-size:14px">（← 此结论已被第六节推翻）</span></h3>
+<table>
+  <thead><tr>
+    <th>模型</th><th class="ctr">参数量</th><th class="ctr">准确率 均值 ± std</th>
+    <th class="ctr">每轮用时</th><th class="ctr">训练 loss</th><th>评价</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td><code>resnet18</code>（+增强）</td><td class="ctr num">11.18 M</td>
+      <td class="ctr num">0.8800 ± 0.0758</td><td class="ctr num">2.72 s</td>
+      <td class="ctr num">0.3166</td>
+      <td>最稳，但体积最大</td>
+    </tr>
+    <tr>
+      <td><code>mobilenet_v3_small</code></td><td class="ctr num">1.52 M</td>
+      <td class="ctr num hi">0.8900 ± 0.0548</td><td class="ctr num">2.62 s</td>
+      <td class="ctr num">0.2868</td>
+      <td><strong>同水平、体积 1/7、方差还更小 —— 真正的选型答案</strong></td>
+    </tr>
+    <tr>
+      <td><code>shufflenet_v2_x1_0</code></td><td class="ctr num">1.26 M</td>
+      <td class="ctr num lo">0.7400 ± 0.0822</td><td class="ctr num">2.66 s</td>
+      <td class="ctr num lo">0.6591</td>
+      <td>训练 loss 0.66 说明 5 轮远未收敛</td>
+    </tr>
+  </tbody>
+</table>
+<p>
+  resnet18 与 mobilenet 的差值 <span class="num">−0.01</span>，
+  <strong>在噪声内，不能说谁更强</strong>——但 mobilenet 只用 1/7 的参数就达到同样水平，
+  这在工程上是明确的胜利。ShuffleNet 落后 0.14（约 3 个验证样本）且训练 loss 高一个数量级，
+  <span style="text-decoration:line-through">这个差距是真的，不是噪声。</span>
+</p>
+<div class="card bad">
+  <p style="margin:0">
+    <strong>上面这句是错的。</strong> 5 折池化（100 张，分辨率 1%）下
+    ShuffleNet 是 <span class="num">0.9033</span>，与 ResNet18 的 <span class="num">0.9133</span>
+    只差 <strong>1 张图</strong>。那 0.14 的差距是 20 张验证集抽样的运气。
+    <strong>详见第六节 6.3。</strong>
+  </p>
+</div>
+
+<h2>四、六步实验总表</h2>
+<table>
+  <thead><tr>
+    <th>步骤</th><th>核心改动</th><th class="ctr">轮数</th>
+    <th class="ctr">指导书预期</th><th class="ctr">单次运行<br>(seed=42)</th>
+    <th class="ctr">5 种子均值 ± std</th><th>结论</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td>1 · 手动搭建 + 从零训练</td><td>AlexNet 随机权重</td><td class="ctr num">30</td>
+      <td class="ctr">0.65 ~ 0.80</td><td class="ctr num">0.8000</td>
+      <td class="ctr num lo">0.6800 ± 0.1037</td>
+      <td>单跑值落在预期上沿，但 5 种子均值<strong>低于预期下限</strong></td>
+    </tr>
+    <tr>
+      <td>2 · + ImageNet 预训练</td><td>冻结卷积层</td><td class="ctr num">5</td>
+      <td class="ctr">0.90 ~ 1.00</td><td class="ctr num">0.9500</td>
+      <td class="ctr num hi">0.9100 ± 0.0548</td>
+      <td>唯一显著有效的改动</td>
+    </tr>
+    <tr>
+      <td>3 · + 数据增强</td><td>翻转/裁剪/色彩/旋转</td><td class="ctr num">5</td>
+      <td class="ctr">≈步骤 2 或更稳</td><td class="ctr num">0.9000</td>
+      <td class="ctr num">0.8800 ± 0.0758</td>
+      <td>无提升；训练 loss 反而升高</td>
+    </tr>
+    <tr>
+      <td>4 · 多模型对比</td><td>resnet18 / mobilenet / shufflenet</td><td class="ctr num">5</td>
+      <td class="ctr">都在 0.9+</td>
+      <td class="ctr num">0.90 / 0.90 / 0.75</td>
+      <td class="ctr num">0.88 / 0.89 / 0.74</td>
+      <td>前两个打平，ShuffleNet 确实落后</td>
+    </tr>
+    <tr>
+      <td>5 · 保存与推理</td><td>state_dict 存 best</td><td class="ctr num">5</td>
+      <td class="ctr">—</td><td class="ctr num">0.9000</td>
+      <td class="ctr num dim">—</td>
+      <td>全量 100 张推理准确率 <strong>91%</strong></td>
+    </tr>
+    <tr>
+      <td>6 · 部署小程序</td><td>Gradio 摄像头界面</td><td class="ctr num">—</td>
+      <td class="ctr">—</td><td class="ctr num hi">HTTP 200</td>
+      <td class="ctr num dim">—</td>
+      <td>服务正常，支持局域网手机访问</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>五、为什么单次运行不可信（量化版）</h2>
+<div class="card bad">
+  <table style="margin:0">
+    <thead><tr><th>现象</th><th>数据</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>验证集粒度</td>
+        <td>20 张 → <strong>1 个样本 = 5%</strong>，所有准确率都是 0.05 的整数倍</td>
+      </tr>
+      <tr>
+        <td>同一配置换种子的波动</td>
+        <td>标准差 <span class="num">0.055 ~ 0.104</span>，即 <strong>1~2 个样本</strong></td>
+      </tr>
+      <tr>
+        <td>被噪声骗到的实例</td>
+        <td>单跑认为 RandomErasing <span class="num">+0.06</span> 有效 → 5 种子实测
+            <span class="num">+0.01</span>；<br>
+            单跑认为冻结 <span class="num">+0.05</span> 更优 → 轮数拉平后
+            <span class="num">+0.05 ± 0.06</span> 打平；<br>
+            单跑认为 ShuffleNet 差 <span class="num">0.14</span> → 5 折池化后只差
+            <span class="num">0.0067</span>（<strong>差 20 倍</strong>）</td>
+      </tr>
+      <tr>
+        <td>仍能得出的可靠结论</td>
+        <td>迁移学习：单次划分 <span class="num">+0.23</span>（5/5 种子一致），
+            5 折池化 <span class="num">+0.27</span>（3/3 种子一致）</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="margin:12px 0 0">
+    <strong>经验法则：</strong>差值 &lt; 2 个验证样本（&lt; 0.10）时不要下结论。
+    想把分辨率提上去，用 <code>step8_crossval.py</code>——<strong>结果见下一节</strong>。
+  </p>
+</div>
+
+<h2>六、5 折交叉验证（已跑完 · 分辨率 1%）</h2>
+<div class="card ok">
+  <h3>这一节推翻了第三节的一个结论</h3>
+  <p style="margin:0">
+    验证集从 20 张扩到 <strong>100 张（池化）</strong>后，分辨率由 5% 细化到 1%。
+    两条结果：<strong>迁移学习依然成立，而且差距更大</strong>（+0.23 → +0.27）；
+    而<strong>「ShuffleNet 明显更差」是单次划分的假象</strong>——
+    CV 下它与 ResNet18 只差 0.7%（0.9033 vs 0.9133），
+    单次划分时看到的 0.14 差距（0.74 vs 0.88）纯粹是那 20 张验证集抽得不巧。
+  </p>
+</div>
+
+<h3>6.1 池化准确率（主数字）</h3>
+<table>
+  <thead><tr><th>配置</th><th>轮数</th><th>lr</th><th>增强</th><th class="num">池化准确率</th><th class="num">± std</th><th class="num">min–max</th><th class="num">逐种子</th><th class="num">秒/折</th></tr></thead>
+  <tbody>
+    <tr><td>从零训练 AlexNet</td><td>30</td><td>1e-4</td><td>无</td><td class="num">0.6533</td><td class="num">0.0473</td><td class="num">0.60–0.69</td><td class="num">.69/.67/.60</td><td class="num">54.5</td></tr>
+    <tr><td><strong>AlexNet 预训练冻结</strong></td><td>5</td><td>1e-4</td><td>无</td><td class="num"><strong>0.9233</strong></td><td class="num">0.0252</td><td class="num">0.90–0.95</td><td class="num">.92/.95/.90</td><td class="num">10.9</td></tr>
+    <tr><td>ResNet18 无增强</td><td>5</td><td>1e-3</td><td>无</td><td class="num">0.9133</td><td class="num">0.0115</td><td class="num">0.90–0.92</td><td class="num">.92/.90/.92</td><td class="num">10.0</td></tr>
+    <tr><td>ResNet18 + 增强</td><td>5</td><td>1e-3</td><td>基础</td><td class="num">0.9100</td><td class="num">0.0100</td><td class="num">0.90–0.92</td><td class="num">.92/.91/.90</td><td class="num">14.3</td></tr>
+    <tr><td>MobileNetV3-S + 增强</td><td>5</td><td>1e-3</td><td>基础</td><td class="num">0.9100</td><td class="num">0.0100</td><td class="num">0.90–0.92</td><td class="num">.92/.90/.91</td><td class="num">13.9</td></tr>
+    <tr><td>ShuffleNetV2 + 增强</td><td>5</td><td>1e-3</td><td>基础</td><td class="num">0.9033</td><td class="num">0.0058</td><td class="num">0.90–0.91</td><td class="num">.90/.91/.90</td><td class="num">14.2</td></tr>
+  </tbody>
+</table>
+<p>
+  5 折 × 3 种子（42 / 1 / 2），池化 100 个预测——<strong>每张图恰好被预测一次</strong>，
+  且每次预测都来自没见过它的模型。「秒/折」是单折训练耗时。
+</p>
+<p style="color:var(--fg2)">
+  读法：分辨率 1% ⇒ 表里每个数字都是 0.01 的整数倍。
+  预训练那一组的 4 个配置落在 <span class="num">0.9033 – 0.9233</span>，
+  跨度只有 2 个百分点（2 张图），<strong>彼此之间没有实质差别</strong>。
+</p>
+
+<h3>6.2 配对比较（同种子逐对）</h3>
+<table>
+  <thead><tr><th>对照</th><th class="num">Δ 池化准确率</th><th class="num">± std</th><th class="num">wins</th><th>判定</th></tr></thead>
+  <tbody>
+    <tr><td>迁移学习（预训练 − 从零）</td><td class="num"><strong>+0.2700</strong></td><td class="num">0.0361</td><td class="num"><strong>3/3</strong></td>
+        <td><strong style="color:#3FB950">显著</strong></td></tr>
+    <tr><td>数据增强（aug − noaug）</td><td class="num">−0.0033</td><td class="num">0.0153</td><td class="num">1/3</td>
+        <td style="color:var(--fg2)">噪声内</td></tr>
+    <tr><td>MobileNet vs ResNet18</td><td class="num">0.0000</td><td class="num">0.0100</td><td class="num">1/3</td>
+        <td style="color:var(--fg2)">完全一致</td></tr>
+    <tr><td>ShuffleNet vs ResNet18</td><td class="num">−0.0067</td><td class="num">0.0115</td><td class="num">0/3</td>
+        <td style="color:var(--fg2)">略低，但幅度极小</td></tr>
+  </tbody>
+</table>
+<p>
+  和第二节（20 张验证集）的配对表对照着看：<strong>结论方向完全一致</strong>，
+  只有 ShuffleNet 那一行从「−0.15」缩到「−0.007」。
+</p>
+
+<h3>6.3 自我修正：ShuffleNet 并不差</h3>
+<div class="card bad">
+  <p style="margin:0">
+    <strong>第三节第 5 条写错了。</strong>
+    那里基于 20 张验证集得出「只有 ShuffleNet 是真的差」（0.74 vs 0.88–0.90）。
+    池化 100 张后它实际是 <span class="num">0.9033</span>，与 ResNet18 的
+    <span class="num">0.9133</span> 相差 <strong>1 张图</strong>。
+  </p>
+</div>
+<table>
+  <thead><tr><th>配置</th><th class="num">单次划分（20 张）</th><th class="num">5 折池化（100 张）</th><th>差异</th></tr></thead>
+  <tbody>
+    <tr><td>ResNet18 + 增强</td><td class="num">0.88 ± 0.08</td><td class="num">0.9100</td><td>+0.03</td></tr>
+    <tr><td>ShuffleNetV2 + 增强</td><td class="num">0.74 ± 0.08</td><td class="num">0.9033</td><td><strong style="color:#F85149">+0.16</strong></td></tr>
+    <tr><td><em>两者差距</em></td><td class="num"><em>−0.14</em></td><td class="num"><em>−0.0067</em></td><td><em>缩小 20 倍</em></td></tr>
+  </tbody>
+</table>
+<p>
+  原因：单次划分只有 20 张验证集，1 张图 = 5%。ShuffleNet 恰好在那 20 张上错了 5 张，
+  就被判成「差 0.14」。<strong>这正是第三节反复强调的粒度陷阱，只不过这次踩坑的是我自己的结论。</strong>
+</p>
+<p>
+  顺带一提：ShuffleNetV2-x1.0 参数量只有 ResNet18 的 1/6，5 轮冻结训练就能到 0.90，
+  在 100 张的小数据上完全够用——<strong>模型选型在这份数据上没有意义</strong>，
+  四个预训练模型都落在 0.90–0.92。
+</p>
+
+<h3>6.4 两种分辨率的完整对照</h3>
+<table>
+  <thead><tr><th>配置</th><th class="num">单次划分 20 张<br>（分辨率 5%）</th><th class="num">5 折池化 100 张<br>（分辨率 1%）</th><th>结论是否一致</th></tr></thead>
+  <tbody>
+    <tr><td>从零训练 AlexNet</td><td class="num">0.68 ± 0.10</td><td class="num">0.6533 ± 0.0473</td><td style="color:#3FB950">一致（差 0.03）</td></tr>
+    <tr><td>AlexNet 预训练冻结</td><td class="num">0.91 ± 0.05</td><td class="num">0.9233 ± 0.0252</td><td style="color:#3FB950">一致（差 0.01）</td></tr>
+    <tr><td>ResNet18 无增强</td><td class="num">0.90 ± 0.08</td><td class="num">0.9133 ± 0.0115</td><td style="color:#3FB950">一致（差 0.01）</td></tr>
+    <tr><td>ResNet18 + 增强</td><td class="num">0.88 ± 0.08</td><td class="num">0.9100 ± 0.0100</td><td style="color:#3FB950">一致（差 0.03）</td></tr>
+    <tr><td>MobileNetV3-S + 增强</td><td class="num">0.89 ± 0.05</td><td class="num">0.9100 ± 0.0100</td><td style="color:#3FB950">一致（差 0.02）</td></tr>
+    <tr><td>ShuffleNetV2 + 增强</td><td class="num">0.74 ± 0.08</td><td class="num">0.9033 ± 0.0058</td><td style="color:#F85149"><strong>不一致（差 0.16）</strong></td></tr>
+  </tbody>
+</table>
+<div class="card info">
+  <p style="margin:0">
+    <strong>怎么读这张表</strong>：5 个配置的结论在两种分辨率下一致，
+    只有 ShuffleNet 翻转。这说明<strong>单次划分在多数情况下够用，但一旦某个配置"运气不好"就会误导</strong>——
+    而 100 张数据下你无法事先知道是哪个。所以本实验的最终数字<strong>以本节的池化列为准</strong>。
+  </p>
+</div>
+
+<h3>6.5 最终结论（合并 50 次消融 + 90 次交叉验证）</h3>
+<div class="card ok">
+  <ol style="margin:0">
+    <li><strong>迁移学习是唯一站得住的结论。</strong>
+        从零 0.6533 → 预训练 0.90+，差 <span class="num">+0.27</span>，3/3 种子一致，
+        且训练时间只要 1/5（10.9s vs 54.5s）。</li>
+    <li><strong>数据增强在这份 100 张数据上没用，甚至略微有害。</strong>
+        两种分辨率、两种轮数下 Δ 都是负的（−0.02 / −0.003 / −0.01），
+        虽然都在噪声内，但<strong>方向四次一致</strong>——不是"有效但测不出"，是"确实没帮助"。</li>
+    <li><strong>模型选型无意义。</strong>四个预训练模型全落在 0.90–0.92，
+        最大的差距只有 2 张图。</li>
+    <li><strong>指导书"六步对比表"里的大部分差异是噪声。</strong>
+        真正可信的只有第一条。</li>
+  </ol>
+</div>
+
+<h2>七、可复现性：两个把结果搞错的坑</h2>
+<div class="card warn">
+  <h3>坑 1 · 消融矩阵漏抄超参</h3>
+  <p style="margin:0">
+    第一版 <code>step7_ablation.py</code> 的配置表里，前两个配置忘了写
+    <code>lr</code>，代码走了兜底默认值 <code>1e-3</code>，而指导书这两步是
+    <code>1e-4</code> —— <strong>差 10 倍</strong>。
+    结果"从零训练"被算成 0.52，比真实值 0.68 低了 0.16。
+    现在配置表里 lr 全部显式写出，并打印在汇总表里。
+  </p>
+</div>
+<div class="card warn">
+  <h3>坑 2 · 每轮验证会悄悄改变 shuffle 顺序</h3>
+  <p style="margin:0 0 8px">
+    <code>step1_scratch.py</code> 每轮都跑一次验证，而消融的循环不验证。
+    表面看只是少了一次评估，但 <strong>DataLoader 的每个迭代器都会用全局随机数
+    生成 base_seed</strong> —— 少迭代一次，就从第 2 轮起 shuffle 顺序分叉，
+    同一个 seed 跑出不同结果（0.80 vs 0.75）。
+  </p>
+  <p style="margin:0">
+    已用 <code>_diag_rng.py</code> 验证：两条路径<strong>首个 batch 的标签完全相同</strong>，
+    最终准确率却不同 —— 精确定位到"从第 2 轮起分叉"。
+    修正方式是让消融也每轮验证，与各脚本协议对齐。
+  </p>
+</div>
+<div class="card ok">
+  <h3>对齐后的自检结果</h3>
+  <p style="margin:0">
+    消融矩阵里 <code>seed=42</code> 的那一格，现在能<strong>精确复现</strong>各脚本单跑的值：
+    <span class="num">1→0.80、2→0.95、3→0.90、4→0.90、6→0.90、7→0.75</span>。
+    这是"控制变量"真正生效的标志。
+  </p>
+</div>
+
+<h2>八、文末思考题</h2>
+
+<h3>1. 把冻结改为全模型微调（lr=1e-5），准确率和训练时间如何变化？</h3>
+<p>
+  <strong>轮数拉平到 5 轮后</strong>：冻结 <span class="num">0.91 ± 0.05</span>，
+  微调 <span class="num">0.86 ± 0.07</span>，差值 <span class="num">+0.05 ± 0.06</span>（3/5 种子）
+  —— <strong>没有显著差异</strong>。
+</p>
+<p>
+  时间上差异明确：冻结只反传分类头，微调要反传全部 <strong>5701 万</strong>参数，
+  每轮耗时约 1.3 倍。但微调的训练 loss（0.264）远高于冻结（0.0015），
+  说明微调仍在持续学习、还有下降空间，而冻结组第 1 轮就收敛到 0.95 了。
+</p>
+<p>
+  <strong>结论：小样本场景冻结是性价比更高的默认选择；微调的潜力更大但需要更多轮数
+  和更多数据才能兑现。</strong>（注意：本实验微调只跑了 5 轮，不能据此否定微调。）
+</p>
+
+<h3>2. 把数据增强再加强（如 RandomErasing），置信度分布如何变化？</h3>
+<p>
+  已实测（配置 5）：准确率 <span class="num">0.89 ± 0.08</span>，相对基础增强
+  <span class="num">+0.01 ± 0.02</span>（1/5 种子）—— <strong>准确率上没有可观察的变化</strong>。
+</p>
+<p>
+  但训练 loss 从 <span class="num">0.317</span> 升到
+  <span class="num">0.378</span>，是所有配置里最高的，说明任务被显著加难了。
+  结合"准确率不变"，可以推断模型转而依赖更多部位的综合证据做判断，
+  即<strong>置信度分布向中间收敛</strong>——错误样本不再给出 90%+ 的盲目高置信度。
+  这通常意味着更好的概率校准，但对本实验的准确率指标没有帮助。
+</p>
+<p class="dim" style="font-size:14px">
+  要严格验证这一点，需要额外记录每张验证图的预测概率并画直方图。
+  工程包里可以在此基础上加一个置信度收集函数，这里不做展开。
+</p>
+
+<h3>3. 用 FastAPI 把 predict 封装成 HTTP 接口，写微信小程序前端调用</h3>
+<p>思路与指导书一致，关键是把第六步的 <code>predict</code> 逻辑从 Gradio 里剥出来：</p>
+<pre><code># server.py —— pip install fastapi uvicorn python-multipart
+from fastapi import FastAPI, UploadFile, File
+import io
+from PIL import Image
+# ... 复用 step6_app 的 net / transform / CLASSES / DEVICE ...
+
+app = FastAPI()
+
+@app.post("/predict")
+async def predict_api(file: UploadFile = File(...)):
+    img = Image.open(io.BytesIO(await file.read())).convert("RGB")
+    x = transform(img).unsqueeze(0)
+    with torch.no_grad():
+        probs = torch.softmax(net(x.to(DEVICE)), dim=1)[0].cpu()
+    conf, pred = probs.max(0)
+    return {"label": int(pred), "name": CLASSES[int(pred)],
+            "confidence": round(float(conf), 4),
+            "probs": [round(float(p), 4) for p in probs]}</code></pre>
+<pre><code># 启动：uvicorn server:app --host 0.0.0.0 --port 8000
+# 小程序端：
+wx.chooseMedia({ count: 1, mediaType: ['image'], success(res) {
+  wx.uploadFile({
+    url: 'http://&lt;电脑IP&gt;:8000/predict',
+    filePath: res.tempFiles[0].tempFilePath,
+    name: 'file',
+    success: r =&gt; console.log(JSON.parse(r.data))
+  })
+}})</code></pre>
+<div class="card warn" style="margin-top:14px">
+  <p style="margin:0">
+    <strong>两个真实的坑：</strong>① 微信小程序只允许请求 <code>https</code> 且域名需在后台白名单备案，
+    局域网 <code>http://192.168.x.x</code> 只能在开发者工具里勾选"不校验合法域名"调试，
+    真机预览会失败——要么上内网穿透（ngrok/frp），要么正式备案域名。
+    ② <code>uvicorn --host 0.0.0.0</code> 会监听全部网卡，Windows 防火墙需放行，
+    且<strong>不要在公网环境裸跑</strong>，至少加一层鉴权。
+  </p>
+</div>
+
+<h2>九、工程包里修掉的 9 处原文档错误</h2>
+<table>
+  <thead><tr><th class="ctr">#</th><th>位置</th><th>原文</th><th>问题</th><th>处理</th></tr></thead>
+  <tbody>
+    <tr><td class="ctr num">1</td><td>1.2 / 完整代码</td>
+        <td><code>class AlexNet(nn.Module)</code></td>
+        <td>缺冒号，且类体没写，只是占位符</td>
+        <td>用 1.2 节实现补全</td></tr>
+    <tr><td class="ctr num">2</td><td>完整代码 dataloader()</td>
+        <td><code>random.sample(...)</code></td>
+        <td>没设种子 → 每次划分都变，无法对比</td>
+        <td>加 <code>random.seed(seed)</code></td></tr>
+    <tr><td class="ctr num">3</td><td>完整代码</td>
+        <td><code>base_path = r"D:\A枣庄学院工作\..."</code></td>
+        <td>该路径在本机不存在</td>
+        <td>统一走 <code>config.DATA_DIR</code> 自动探测</td></tr>
+    <tr><td class="ctr num">4</td><td>第三步</td>
+        <td><code>from step1_scratch import ResNet18Manual</code></td>
+        <td>悬空引用——那个类根本没定义</td>
+        <td>在 <code>models_manual.py</code> 手写 ResNet18</td></tr>
+    <tr><td class="ctr num">5</td><td>第三步</td>
+        <td><code>load_state_dict(..., strict=False)</code></td>
+        <td><strong>strict=False 只忽略缺失/多余键，形状不匹配照样崩</strong>（fc 512→2 vs 512→1000）</td>
+        <td>先建 1000 类 → 加载 → 再换头</td></tr>
+    <tr><td class="ctr num">6</td><td>第四步</td>
+        <td>只 import nn 却用 <code>torch.save</code></td>
+        <td>NameError</td><td>补 <code>import torch</code></td></tr>
+    <tr><td class="ctr num">7</td><td>5.2</td>
+        <td><code>device="cpu"</code> 写死 + <code>net(X)</code></td>
+        <td>换 GPU 立刻报 Input/weight 设备不一致</td>
+        <td>统一 <code>X.to(device)</code></td></tr>
+    <tr><td class="ctr num">8</td><td>5.3</td>
+        <td><code>models.resnet18(weights=None)</code> 写死</td>
+        <td>权重来自别的架构时键名对不上</td>
+        <td>加 <code>--model</code> 参数</td></tr>
+    <tr><td class="ctr num">9</td><td>6.2</td>
+        <td>权重文件名写死 <code>best_model.pth</code></td>
+        <td>无法切换模型/路径</td>
+        <td>加 <code>--weight / --port / --host</code></td></tr>
+  </tbody>
+</table>
+
+<h2>十、复现命令</h2>
+<p class="dim" style="font-size:14px">
+  推荐用总控脚本 <code>run_all.py</code>——它会把每个任务的输出同时打到屏幕并写入
+  <code>outputs/logs/</code>，最后给出成功/失败/耗时汇总表。
+</p>
+<pre><code>cd "D:/CV/cat_dog"
+PY="C:/Users/Echo/.conda/envs/dl/python.exe"
+
+$PY run_all.py --dry-run        # 先看计划，不执行
+$PY run_all.py --list           # 列出全部任务编号
+$PY run_all.py single           # 六步单次运行（约 4 分钟）
+$PY run_all.py ablation         # 多随机种子消融（约 6 分钟）
+$PY run_all.py crossval         # 5 折交叉验证（约 9 分钟）
+$PY run_all.py all              # 上面三组全跑
+$PY run_all.py app              # 单独启动 Gradio 小程序
+
+# --- 也可以逐个脚本跑 ---
+$PY check_env.py                       # 环境自检（依赖 / 数据 / 权重缓存）
+$PY step1_scratch.py                   # 0.80（默认划分）
+$PY step1_scratch.py --split txt       # 0.75（指导书原版划分）
+$PY step2_pretrained.py                # 0.95（30 轮）
+$PY step2_pretrained.py --finetune --epochs 5   # 0.95（全解冻微调）
+$PY step3_augment.py                   # 0.90
+$PY step3_augment.py --no-augment      # 0.90（对照组）
+$PY step4_compare.py                   # 0.90 / 0.90 / 0.75
+$PY step5_train_save.py                # 存 outputs/best_model.pth
+$PY step5_predict.py --dir "data"      # 全量 100 张 91%
+$PY step6_app.py                       # 浏览器打开 127.0.0.1:7860
+
+# --- 本报告的主数据 ---
+$PY step7_ablation.py                                          # 7 配置 × 5 种子
+$PY step7_ablation.py --configs 2_alexnet_frozen 8_alexnet_finetune \
+                      9_resnet18_noaug_15 10_resnet18_aug_15 \
+                      --out outputs/ablation_extra.csv          # 补充 4 配置
+$PY step8_crossval.py                  # 6 配置 × 3 种子 × 5 折（第六节主数据）
+$PY _diag_rng.py                       # 验证"每轮验证会改变 shuffle 顺序"</code></pre>
+
+<div class="foot">
+  报告由实跑日志生成，结构化数据见 <code>outputs/</code> 下的
+  <code>ablation_results.csv</code> / <code>ablation_extra.csv</code> / <code>crossval_results.csv</code>。<br>
+  共 <strong>50 次消融 + 10 次单跑 + 90 次交叉验证</strong>（6 配置 × 3 种子 × 5 折）。<br>
+  <strong>读法提醒：</strong>验证集 20 张，1 个样本 = 5%。差值小于 2 个样本（0.10）时，
+  本报告一律表述为"未观察到差异"而非"A 优于 B"。
+</div>
+
+</div>
+</body>
+</html>
