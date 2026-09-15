@@ -1,12 +1,7 @@
 # 猫狗分类实验 · 可直接运行的代码包
-
-配套文档：`D:\cxdownload\实验文档\猫狗分类实验指导书.md`（原始教学文档）
 一页纸速查：[`项目说明.md`](项目说明.md) · 结果分析：[`实验结果报告.html`](实验结果报告.html)
 数据集：`data\`（100 张，猫 `cat.1.jpg`~`cat.50.jpg` / 狗 `dog.51.jpg`~`dog.100.jpg`）
 权重缓存：`torch_cache\`（`config.py` 自动指向，可随项目搬迁）
-
-指导书里的代码是**教学切片**，照抄进编辑器会有几处跑不起来（详见文末"原文档的坑"）。
-这个目录把它们拼成了完整可运行的工程，并修掉了其中的错误。
 
 ---
 
@@ -345,23 +340,7 @@ $PY step8_crossval.py --folds 10                                                
 
 ---
 
-## 八、原文档的坑（照着抄会报错的地方）
-
-| # | 位置 | 原文 | 问题 | 本包的处理 |
-|---|---|---|---|---|
-| 1 | 1.2 / "完整代码" | `class AlexNet(nn.Module)` | 缺冒号，且**类体没写**，只是占位符 | 用 1.2 节实现补全（`step1_scratch.py`） |
-| 2 | 完整代码 `dataloader()` | `random.sample(imgs_abs_path, test_size)` | 没设种子 → 每次划分都变，无法对比 | `random.seed(seed)` 固定（`--split txt` 时生效） |
-| 3 | 完整代码 | `base_path = r"D:\A枣庄学院工作\..."` | 该路径在本机**不存在** | 统一走 `config.DATA_DIR` |
-| 4 | 第三步 | `from step1_scratch import ResNet18Manual` | **悬空引用** —— `step1_scratch.py` 里根本没有这个类 | 在 `models_manual.py` 里手写了一个 ResNet18 |
-| 5 | 第三步 | `net.load_state_dict(official.state_dict(), strict=False)` | `strict=False` 只忽略"缺失/多余"的键，**形状不匹配照样报错**；fc 是 512→2 而官方是 512→1000，必崩 | 先建 1000 类 → 加载 → 再换头（和第二步同套路） |
-| 6 | 第四步 | 只 `import torch.nn as nn` 却用 `torch.save` | NameError | 补 `import torch` |
-| 7 | 5.2 | `device = "cpu"` 写死 + `net(X)` 没搬数据 | 换 GPU 立刻报 "expected all tensors on the same device" | 统一 `X.to(device)`，设备由 `--device` 控制 |
-| 8 | 5.3 | `models.resnet18(weights=None)` 写死 | 若权重是 mobilenet 训的，键名对不上 | 加 `--model` 参数 |
-| 9 | 6.2 | 无 | 权重路径写死为 `best_model.pth` | 加 `--weight / --port / --host` |
-
----
-
-## 九、常见问题
+## 八、常见问题
 
 **Q：下载预训练权重卡住 / 失败？**
 
