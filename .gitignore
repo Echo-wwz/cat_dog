@@ -33,15 +33,25 @@ env/
 
 # ---- 编辑器 / 系统 ----
 .idea/
+.vscode/
 *.swp
 .DS_Store
 Thumbs.db
 
+# ---- 本地工作记录（AI 助手的项目记忆，不入库）----
+.workbuddy-ai/
+
+# ---- 本机环境说明（含本机绝对路径，只留本地，不公开）----
+项目说明.md
+
 # ---- 临时脚本 / 手动副本（不入库）----
 _smoke.py
-_diag_*.py
 _diag_*.out
 *副本*
+
+# _diag_rng.py 是正式的可复现性诊断脚本（run_all.py 任务 7c 会调用），
+# 必须入库，所以上面不再用 _diag_*.py 通配。
+!_diag_rng.py
 
 # 注意：outputs/ 下的结果数据要提交，所以这里只忽略 .pth（见上方规则），
 #      不整目录忽略 outputs/。保留的文件：
